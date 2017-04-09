@@ -2,6 +2,7 @@
 
 import numpy as np
 from vispy import gloo, visuals
+import os
 
 class ParticleVisual(visuals.Visual):
     data_vbo = None
@@ -29,8 +30,14 @@ class ParticleVisual(visuals.Visual):
         self.reset_data(pos, color, radius, kernel)
 
         visuals.Visual.__init__(self)
-        self.program = visuals.shaders.ModularProgram(vertex_shader,
-                                                      fragment_shader)
+        shaders = {}
+        curpath = os.path.dirname(os.path.abspath(__file__))
+        for shader in ["vertex", "fragment"]:
+            with open(os.path.join(curpath, "shaders",
+                "sph_particle.{}.glsl".format(shader))) as f:
+                shaders[shader] = f.read()
+        self.program = visuals.shaders.ModularProgram(shaders["vertex"],
+                                                      shaders["fragment"])
         self.program['u_radius_scale'] = radius_scale
         self.data_vbo = gloo.VertexBuffer(self.data)
         self.program.bind(self.data_vbo)
