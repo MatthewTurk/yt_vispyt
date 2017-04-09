@@ -2,6 +2,7 @@
 
 import numpy as np
 from vispy import app, visuals, scene
+from .particle_visual import ParticleVisual
 
 class ParticleRendering(object):
     _fov = 60.0
