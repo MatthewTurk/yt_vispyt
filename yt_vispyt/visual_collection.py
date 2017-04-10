@@ -104,7 +104,7 @@ class ParticleRendering(object):
         self.view.camera.distance = self.distance
         self.focal_point = center
 
-        ## random console stuff
+        # random console stuff
         #console = grid.add_widget(
         #    scene.Console(text_color='g',font_size=12.,border_color='g'))
         #console.write('lkjasdfkljasf')

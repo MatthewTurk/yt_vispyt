@@ -3,7 +3,6 @@ varying float kernel;
 void main(){
     gl_FragColor = color;
 
-    //poor man's anti aliasing
     vec2 circCoord = 2.0 * gl_PointCoord - 1.0;
     float r = dot(circCoord, circCoord);
     
@@ -11,7 +10,6 @@ void main(){
         discard;
     }
 
-    //poor man's kernel smoothing
     if(kernel > 0){
         float c = 0.5;
         float a = 0.1;
