@@ -8,6 +8,7 @@ class YTVisual(visuals.Visual):
     data_vbo = None
     dtype = ()
     visual_name = None
+    draw_type = None
 
     def __init__(self):
         super(YTVisual, self).__init__()
@@ -61,4 +62,4 @@ class YTVisual(visuals.Visual):
             transforms.document_to_framebuffer)
         #self.program.vert['transform'] = transforms.get_full_transform()
         self.program.vert['itrans'] = transforms.get_full_transform().inverse
-        self.program.draw('points')
+        self.program.draw(self.draw_type)

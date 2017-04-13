@@ -6,6 +6,7 @@ from .yt_visual import YTVisual
 import os
 
 class ParticleVisual(YTVisual):
+    draw_type = "points"
     data_vbo = None
     dtype = (('a_position',     np.float32, 3),
              ('a_color',        np.float32, 4),
