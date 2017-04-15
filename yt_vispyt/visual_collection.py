@@ -4,47 +4,41 @@ import numpy as np
 from vispy import app, visuals, scene
 from .particle_visual import ParticleVisual
 
-class ParticleRendering(object):
+def delegate_view(name, convert_to_unitary = True):
+    def getter(self):
+        return getattr(self, "_{}".format(name), None)
+    def setter(self, value):
+        if convert_to_unitary:
+            value = self._in_unitary(value)
+         setattr(self, "_{}".format(name), value)
+         if hasattr(self, "view"):
+            setattr(self.view.camera, name, value)
+    return property(getter, setter)
+
+class YTVispyScene(object):
     _fov = 60.0
     _distance = 1.0
-    _focal_point = (0.0,0.0,0.0)
+    _center = (0.0,0.0,0.0)
 
-    def __init__(self):
-        self.particles = []
+    def __init__(self, ds):
+        self.ds = ds
+        self.nodes = []
 
         self.particle_node = scene.visuals.create_visual_node(ParticleVisual)
-        self.particle_items = []
 
-    @property
-    def distance(self):
-        return self._distance
+    def _in_unitary(self, value):
+        if isinstance(value, tuple) and len(value) == 2 \
+                and isinstance(value[1], str):
+            value = self.ds.quan(value[0], value[1])
+        if hasattr(value, "in_units"):
+            return value.in_units("unitary")
+        else:
+            return self.ds.quan(value[0], "unitary")
 
-    @distance.setter
-    def distance(self, value):
-        if hasattr(self, "view"):
-            self.view.camera.distance = value
-        self._distance = value
-
-    @property
-    def fov(self):
-        return self._fov
-
-    @fov.setter
-    def fov(self, value):
-        if hasattr(self, "view"):
-            self.view.camera.fov = value
-        self._fov = value
-
-    @property
-    def focal_point(self):
-        return self._focal_point
+    distance = delegate_view("distance")
+    fov = delegate_view("fov", False)
+    focal_point = delegate_view("center")
     
-    @focal_point.setter
-    def focal_point(self, value):
-        if hasattr(self, "view"):
-            self.view.camera.center = value
-        self._focal_point = value
-
     def add_particles(self, particle_position, radius,
                       radius_scale=1.0,
                       color=(1,1,1), color_by='', 
